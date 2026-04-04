@@ -263,6 +263,7 @@ class EquityUpdate(BaseModel):
     market: Optional[StockMarket] = None
     quantity: Optional[int] = None
     avg_buy_price: Optional[float] = None
+    current_price: Optional[float] = None
     notes: Optional[str] = None
 
 # Goal Models

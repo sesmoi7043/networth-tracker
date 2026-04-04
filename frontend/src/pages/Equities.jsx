@@ -54,6 +54,7 @@ export default function Equities() {
     market: 'NSE',
     quantity: '',
     avg_buy_price: '',
+    current_price: '',
     notes: ''
   });
   const [error, setError] = useState('');
@@ -90,6 +91,7 @@ export default function Equities() {
         market: equity.market,
         quantity: equity.quantity.toString(),
         avg_buy_price: equity.avg_buy_price.toString(),
+        current_price: equity.current_price ? equity.current_price.toString() : '',
         notes: equity.notes || ''
       });
     } else {
@@ -100,6 +102,7 @@ export default function Equities() {
         market: 'NSE',
         quantity: '',
         avg_buy_price: '',
+        current_price: '',
         notes: ''
       });
     }
@@ -116,6 +119,7 @@ export default function Equities() {
       market: 'NSE',
       quantity: '',
       avg_buy_price: '',
+      current_price: '',
       notes: ''
     });
   };
@@ -132,6 +136,7 @@ export default function Equities() {
         market: formData.market,
         quantity: parseInt(formData.quantity),
         avg_buy_price: parseFloat(formData.avg_buy_price),
+        current_price: formData.current_price ? parseFloat(formData.current_price) : null,
         notes: formData.notes || null
       };
 
@@ -415,6 +420,22 @@ export default function Equities() {
                     required
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="label">
+                  Current Price / LTP (Optional)
+                  <span className="text-xs text-gray-400 ml-2">Leave empty to auto-fetch</span>
+                </label>
+                <input
+                  type="number"
+                  className="input"
+                  placeholder="Auto-fetch from market"
+                  min="0"
+                  step="0.01"
+                  value={formData.current_price}
+                  onChange={(e) => setFormData({ ...formData, current_price: e.target.value })}
+                />
               </div>
 
               <div>
