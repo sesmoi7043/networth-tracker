@@ -461,14 +461,14 @@
       "market": "NSE",
       "quantity": 50,
       "avg_buy_price": 3200,
-      "current_price": 3850,
+      "current_price": 2450.7,
       "invested_amount": 160000,
-      "current_value": 192500,
-      "gain_loss": 32500,
-      "gain_loss_percent": 20.3125,
+      "current_value": 122534.99999999999,
+      "gain_loss": -37465.000000000015,
+      "gain_loss_percent": -23.41562500000001,
       "notes": "IT sector - long term",
       "created_at": "2026-04-03T11:41:03.283575",
-      "updated_at": "2026-04-03T11:41:03.283592"
+      "updated_at": "2026-04-04T10:09:03.893937"
     },
     {
       "id": "51ca9efd-3dd6-483d-a376-9597fed42c68",
@@ -478,14 +478,14 @@
       "market": "NSE",
       "quantity": 100,
       "avg_buy_price": 1400,
-      "current_price": 1580,
+      "current_price": 1300.8,
       "invested_amount": 140000,
-      "current_value": 158000,
-      "gain_loss": 18000,
-      "gain_loss_percent": 12.857142857142856,
+      "current_value": 130080.0,
+      "gain_loss": -9920.0,
+      "gain_loss_percent": -7.085714285714285,
       "notes": "IT sector",
       "created_at": "2026-04-03T11:41:03.319856",
-      "updated_at": "2026-04-03T11:41:03.319873"
+      "updated_at": "2026-04-04T10:09:04.525963"
     },
     {
       "id": "293238a0-fd0f-4b44-9360-83c29a40ec34",
@@ -495,14 +495,14 @@
       "market": "NSE",
       "quantity": 75,
       "avg_buy_price": 1550,
-      "current_price": 1680,
+      "current_price": 750.9,
       "invested_amount": 116250,
-      "current_value": 126000,
-      "gain_loss": 9750,
-      "gain_loss_percent": 8.38709677419355,
+      "current_value": 56317.5,
+      "gain_loss": -59932.5,
+      "gain_loss_percent": -51.55483870967742,
       "notes": "Banking sector",
       "created_at": "2026-04-03T11:41:03.360487",
-      "updated_at": "2026-04-03T11:41:03.360503"
+      "updated_at": "2026-04-04T10:09:05.537037"
     },
     {
       "id": "ef1f76fb-7d5f-4811-9274-d08ca3bf8bd8",
@@ -512,14 +512,14 @@
       "market": "NSE",
       "quantity": 40,
       "avg_buy_price": 2400,
-      "current_price": 2750,
+      "current_price": 1350.5,
       "invested_amount": 96000,
-      "current_value": 110000,
-      "gain_loss": 14000,
-      "gain_loss_percent": 14.583333333333334,
+      "current_value": 54020.0,
+      "gain_loss": -41980.0,
+      "gain_loss_percent": -43.72916666666667,
       "notes": "Diversified",
       "created_at": "2026-04-03T11:41:03.400678",
-      "updated_at": "2026-04-03T11:41:03.400693"
+      "updated_at": "2026-04-04T10:09:06.411284"
     },
     {
       "id": "edfd60f8-d3e0-46d6-ae87-de8bae88798d",
@@ -546,14 +546,14 @@
       "market": "NASDAQ",
       "quantity": 10,
       "avg_buy_price": 150,
-      "current_price": 185,
+      "current_price": 255.92,
       "invested_amount": 1500,
-      "current_value": 1850,
-      "gain_loss": 350,
-      "gain_loss_percent": 23.333333333333332,
+      "current_value": 2559.2,
+      "gain_loss": 1059.1999999999998,
+      "gain_loss_percent": 70.61333333333332,
       "notes": "US Tech - USD",
       "created_at": "2026-04-03T11:41:03.481445",
-      "updated_at": "2026-04-03T11:41:03.481459"
+      "updated_at": "2026-04-04T10:09:08.332336"
     }
   ],
   "goals": [
