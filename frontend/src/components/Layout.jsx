@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { useTheme } from '../ThemeContext';
+import { usePrivacy } from '../PrivacyContext';
 import { 
   LayoutDashboard, 
   Wallet, 
@@ -13,13 +14,29 @@ import {
   Landmark,
   Shield,
   TrendingUp,
-  BarChart3
+  BarChart3,
+  Eye,
+  EyeOff,
+  Clock
 } from 'lucide-react';
 import { useState } from 'react';
+
+const formatLastUpdated = (date) => {
+  if (!date) return 'Never';
+  return new Intl.DateTimeFormat('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  }).format(new Date(date));
+};
 
 export default function Layout() {
   const { user, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
+  const { privacyMode, togglePrivacyMode, lastUpdated } = usePrivacy();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -47,6 +64,13 @@ export default function Layout() {
           <span className="font-bold text-xl text-gray-900 dark:text-white">NetWorth</span>
         </div>
         <div className="flex items-center gap-2">
+          <button 
+            onClick={togglePrivacyMode}
+            className={`p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 ${privacyMode ? 'text-amber-500' : 'text-gray-600 dark:text-gray-300'}`}
+            title={privacyMode ? 'Show values' : 'Hide values'}
+          >
+            {privacyMode ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
           <button 
             onClick={toggleDarkMode}
             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
@@ -91,8 +115,23 @@ export default function Layout() {
             </div>
           </div>
 
+          {/* Privacy Toggle */}
+          <div className="px-4 pt-4 pb-2">
+            <button
+              onClick={togglePrivacyMode}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-150 ${
+                privacyMode 
+                  ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800' 
+                  : 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800'
+              }`}
+            >
+              {privacyMode ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              <span className="font-medium">{privacyMode ? 'Privacy On' : 'Privacy Off'}</span>
+            </button>
+          </div>
+
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-1">
+          <nav className="flex-1 p-4 pt-2 space-y-1">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -112,8 +151,18 @@ export default function Layout() {
             ))}
           </nav>
 
-          {/* User Section */}
+          {/* Last Updated & User Section */}
           <div className="p-4 border-t border-gray-100 dark:border-gray-700">
+            {/* Last Updated */}
+            <div className="flex items-center gap-2 px-4 py-2 mb-2 text-xs text-gray-500 dark:text-gray-400">
+              <Clock className="w-3.5 h-3.5" />
+              <div>
+                <span className="font-medium">Last updated:</span>
+                <br />
+                <span>{formatLastUpdated(lastUpdated)}</span>
+              </div>
+            </div>
+            
             <div className="flex items-center gap-3 px-4 py-3">
               <div className="w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center">
                 <span className="font-medium text-gray-600 dark:text-gray-200">

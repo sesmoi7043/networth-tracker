@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { assetsAPI } from '../api';
+import { usePrivacy } from '../PrivacyContext';
 import { 
   Plus, 
   Edit2, 
@@ -26,7 +27,7 @@ const CATEGORIES = [
 
 const getCategoryInfo = (value) => CATEGORIES.find(c => c.value === value) || CATEGORIES[6];
 
-const formatCurrency = (value) => {
+const formatCurrencyRaw = (value) => {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
@@ -36,6 +37,7 @@ const formatCurrency = (value) => {
 };
 
 export default function Assets() {
+  const { privacyMode, updateLastUpdated } = usePrivacy();
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -54,6 +56,7 @@ export default function Assets() {
       setLoading(true);
       const response = await assetsAPI.getAll();
       setAssets(response.data);
+      updateLastUpdated();
     } catch (err) {
       setError('Failed to load assets');
     } finally {
@@ -125,6 +128,11 @@ export default function Assets() {
     } catch (err) {
       setError('Failed to delete asset');
     }
+  };
+
+  const formatCurrency = (value) => {
+    if (privacyMode) return '₹ ••••••';
+    return formatCurrencyRaw(value);
   };
 
   const totalAssets = assets.reduce((sum, asset) => sum + asset.value, 0);

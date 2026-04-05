@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './AuthContext';
 import { ThemeProvider } from './ThemeContext';
+import { PrivacyProvider } from './PrivacyContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -43,8 +44,9 @@ function PublicRoute({ children }) {
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter>
+      <PrivacyProvider>
+        <AuthProvider>
+          <BrowserRouter>
           <Routes>
             <Route path="/login" element={
               <PublicRoute>
@@ -70,8 +72,9 @@ function App() {
               <Route path="mutual-funds" element={<MutualFunds />} />
             </Route>
           </Routes>
-        </BrowserRouter>
-      </AuthProvider>
+          </BrowserRouter>
+        </AuthProvider>
+      </PrivacyProvider>
     </ThemeProvider>
   );
 }

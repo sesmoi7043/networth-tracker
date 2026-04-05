@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { mutualFundsAPI } from '../api';
+import { usePrivacy } from '../PrivacyContext';
 import { 
   Plus, 
   Edit2, 
@@ -25,7 +26,7 @@ const FUND_CATEGORIES = [
 
 const getCategoryInfo = (value) => FUND_CATEGORIES.find(c => c.value === value) || FUND_CATEGORIES[0];
 
-const formatCurrency = (value) => {
+const formatCurrencyRaw = (value) => {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
@@ -41,6 +42,7 @@ const formatPercent = (value) => {
 };
 
 export default function MutualFunds() {
+  const { privacyMode, updateLastUpdated } = usePrivacy();
   const [funds, setFunds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -63,6 +65,7 @@ export default function MutualFunds() {
       setLoading(true);
       const response = await mutualFundsAPI.getAll();
       setFunds(response.data);
+      updateLastUpdated();
     } catch (err) {
       setError('Failed to load mutual funds');
     } finally {
@@ -160,6 +163,11 @@ export default function MutualFunds() {
     } catch (err) {
       setError('Failed to delete mutual fund');
     }
+  };
+
+  const formatCurrency = (value) => {
+    if (privacyMode) return '₹ ••••••';
+    return formatCurrencyRaw(value);
   };
 
   const totalInvested = funds.reduce((sum, fund) => sum + fund.invested_amount, 0);

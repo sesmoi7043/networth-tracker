@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { dashboardAPI, goalAPI } from '../api';
+import { usePrivacy } from '../PrivacyContext';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -31,7 +32,7 @@ import {
 
 const COLORS = ['#0ea5e9', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
 
-const formatCurrency = (value) => {
+const formatCurrencyRaw = (value) => {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
@@ -45,6 +46,7 @@ const formatCategoryName = (name) => {
 };
 
 export default function Dashboard() {
+  const { privacyMode, updateLastUpdated } = usePrivacy();
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -64,6 +66,7 @@ export default function Dashboard() {
       setMetrics(metricsResponse.data);
       setGoal(goalResponse.data);
       setError('');
+      updateLastUpdated();
     } catch (err) {
       setError('Failed to load dashboard data');
     } finally {
@@ -123,6 +126,12 @@ export default function Dashboard() {
   }
 
   const netWorthPositive = metrics?.net_worth >= 0;
+
+  // Format currency with privacy mode support
+  const formatCurrency = (value) => {
+    if (privacyMode) return '₹ ••••••';
+    return formatCurrencyRaw(value);
+  };
 
   // Prepare chart data
   const assetChartData = Object.entries(metrics?.assets_by_category || {}).map(([name, value]) => ({

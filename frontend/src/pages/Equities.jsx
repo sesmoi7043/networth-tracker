@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { equitiesAPI, exchangeAPI } from '../api';
+import { usePrivacy } from '../PrivacyContext';
 import { 
   Plus, 
   Edit2, 
@@ -22,7 +23,7 @@ const DEFAULT_USD_TO_INR = 83.5;
 
 const getMarketInfo = (value) => MARKETS.find(m => m.value === value) || MARKETS[0];
 
-const formatCurrency = (value, market = 'NSE') => {
+const formatCurrencyRaw = (value, market = 'NSE') => {
   if (market === 'NASDAQ') {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -46,6 +47,7 @@ const formatPercent = (value) => {
 };
 
 export default function Equities() {
+  const { privacyMode, updateLastUpdated } = usePrivacy();
   const [equities, setEquities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -70,6 +72,7 @@ export default function Equities() {
       else setLoading(true);
       const response = await equitiesAPI.getAll(refresh);
       setEquities(response.data);
+      updateLastUpdated();
     } catch (err) {
       setError('Failed to load equities');
     } finally {
@@ -181,6 +184,11 @@ export default function Equities() {
     } catch (err) {
       setError('Failed to delete equity');
     }
+  };
+
+  const formatCurrency = (value, market = 'NSE') => {
+    if (privacyMode) return market === 'NASDAQ' ? '$ ••••••' : '₹ ••••••';
+    return formatCurrencyRaw(value, market);
   };
 
   // Calculate totals in INR (convert NASDAQ USD to INR)

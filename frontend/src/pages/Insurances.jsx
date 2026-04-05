@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { insurancesAPI } from '../api';
+import { usePrivacy } from '../PrivacyContext';
 import { 
   Plus, 
   Edit2, 
@@ -26,7 +27,7 @@ const INSURANCE_TYPES = [
 
 const getInsuranceTypeInfo = (value) => INSURANCE_TYPES.find(t => t.value === value) || INSURANCE_TYPES[5];
 
-const formatCurrency = (value) => {
+const formatCurrencyRaw = (value) => {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
@@ -65,6 +66,7 @@ const getExpiryStatus = (dateStr) => {
 };
 
 export default function Insurances() {
+  const { privacyMode, updateLastUpdated } = usePrivacy();
   const [insurances, setInsurances] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -89,6 +91,7 @@ export default function Insurances() {
       setLoading(true);
       const response = await insurancesAPI.getAll();
       setInsurances(response.data);
+      updateLastUpdated();
     } catch (err) {
       setError('Failed to load insurances');
     } finally {
@@ -194,6 +197,11 @@ export default function Insurances() {
     } catch (err) {
       setError('Failed to delete insurance');
     }
+  };
+
+  const formatCurrency = (value) => {
+    if (privacyMode) return '₹ ••••••';
+    return formatCurrencyRaw(value);
   };
 
   // Calculate annual premium (normalize monthly to yearly)

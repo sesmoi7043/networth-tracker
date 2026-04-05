@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { bankAccountsAPI } from '../api';
+import { usePrivacy } from '../PrivacyContext';
 import { 
   Plus, 
   Edit2, 
@@ -23,7 +24,7 @@ const ACCOUNT_TYPES = [
 
 const getAccountTypeInfo = (value) => ACCOUNT_TYPES.find(t => t.value === value) || ACCOUNT_TYPES[0];
 
-const formatCurrency = (value) => {
+const formatCurrencyRaw = (value) => {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
@@ -38,6 +39,7 @@ const maskAccountNumber = (num) => {
 };
 
 export default function BankAccounts() {
+  const { privacyMode, updateLastUpdated } = usePrivacy();
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -58,6 +60,7 @@ export default function BankAccounts() {
       setLoading(true);
       const response = await bankAccountsAPI.getAll();
       setAccounts(response.data);
+      updateLastUpdated();
     } catch (err) {
       setError('Failed to load bank accounts');
     } finally {
@@ -133,6 +136,11 @@ export default function BankAccounts() {
     } catch (err) {
       setError('Failed to delete bank account');
     }
+  };
+
+  const formatCurrency = (value) => {
+    if (privacyMode) return '₹ ••••••';
+    return formatCurrencyRaw(value);
   };
 
   const totalBalance = accounts.reduce((sum, account) => sum + account.balance, 0);

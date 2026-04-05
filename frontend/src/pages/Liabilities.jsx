@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { liabilitiesAPI } from '../api';
+import { usePrivacy } from '../PrivacyContext';
 import { 
   Plus, 
   Edit2, 
@@ -25,7 +26,7 @@ const CATEGORIES = [
 
 const getCategoryInfo = (value) => CATEGORIES.find(c => c.value === value) || CATEGORIES[5];
 
-const formatCurrency = (value) => {
+const formatCurrencyRaw = (value) => {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
@@ -35,6 +36,7 @@ const formatCurrency = (value) => {
 };
 
 export default function Liabilities() {
+  const { privacyMode, updateLastUpdated } = usePrivacy();
   const [liabilities, setLiabilities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -54,6 +56,7 @@ export default function Liabilities() {
       setLoading(true);
       const response = await liabilitiesAPI.getAll();
       setLiabilities(response.data);
+      updateLastUpdated();
     } catch (err) {
       setError('Failed to load liabilities');
     } finally {
@@ -127,6 +130,11 @@ export default function Liabilities() {
     } catch (err) {
       setError('Failed to delete liability');
     }
+  };
+
+  const formatCurrency = (value) => {
+    if (privacyMode) return '₹ ••••••';
+    return formatCurrencyRaw(value);
   };
 
   const totalLiabilities = liabilities.reduce((sum, liability) => sum + liability.amount, 0);
