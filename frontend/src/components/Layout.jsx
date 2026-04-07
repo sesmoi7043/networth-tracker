@@ -20,9 +20,12 @@ import {
   EyeOff,
   Clock,
   Download,
-  User
+  Upload,
+  User,
+  AlertCircle,
+  CheckCircle
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 const formatLastUpdated = (date) => {
   if (!date) return 'Never';
@@ -39,10 +42,13 @@ const formatLastUpdated = (date) => {
 export default function Layout() {
   const { user, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
-  const { privacyMode, togglePrivacyMode, lastUpdated } = usePrivacy();
+  const { privacyMode, togglePrivacyMode, lastUpdated, updateLastUpdated } = usePrivacy();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState(null);
+  const fileInputRef = useRef(null);
 
   const handleLogout = () => {
     logout();
@@ -66,6 +72,48 @@ export default function Layout() {
       console.error('Export failed:', err);
     } finally {
       setExporting(false);
+    }
+  };
+
+  const handleRestoreClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.name.endsWith('.json')) {
+      setImportResult({ success: false, message: 'Please select a JSON file' });
+      setTimeout(() => setImportResult(null), 3000);
+      return;
+    }
+
+    try {
+      setImporting(true);
+      setImportResult(null);
+      const response = await exportAPI.import(file);
+      setImportResult({ 
+        success: true, 
+        message: `Imported ${response.data.details.assets} assets, ${response.data.details.liabilities} liabilities, ${response.data.details.bank_accounts} bank accounts, ${response.data.details.mutual_funds} mutual funds, ${response.data.details.equities} equities` 
+      });
+      updateLastUpdated();
+      // Refresh the page after successful import
+      setTimeout(() => {
+        setImportResult(null);
+        window.location.reload();
+      }, 2000);
+    } catch (err) {
+      console.error('Import failed:', err);
+      setImportResult({ success: false, message: err.response?.data?.detail || 'Import failed' });
+      setTimeout(() => setImportResult(null), 3000);
+    } finally {
+      setImporting(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -198,21 +246,52 @@ export default function Layout() {
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={handleExport}
-                disabled={exporting}
-                className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 border border-blue-200 dark:border-blue-800 transition-colors duration-150 disabled:opacity-50"
-                title="Export data for backup"
-              >
-                <Download className={`w-4 h-4 ${exporting ? 'animate-bounce' : ''}`} />
-                <span>{exporting ? 'Exporting...' : 'Backup'}</span>
-              </button>
+            <div className="space-y-2">
+              {/* Import Result Message */}
+              {importResult && (
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs ${importResult.success ? 'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400' : 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400'}`}>
+                  {importResult.success ? <CheckCircle className="w-3.5 h-3.5 flex-shrink-0" /> : <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />}
+                  <span className="truncate">{importResult.message}</span>
+                </div>
+              )}
+              
+              {/* Hidden file input */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept=".json"
+                className="hidden"
+              />
+              
+              {/* Backup & Restore Row */}
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={handleExport}
+                  disabled={exporting}
+                  className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 border border-blue-200 dark:border-blue-800 transition-colors duration-150 disabled:opacity-50"
+                  title="Export data for backup"
+                >
+                  <Download className={`w-3.5 h-3.5 ${exporting ? 'animate-bounce' : ''}`} />
+                  <span>{exporting ? 'Saving...' : 'Backup'}</span>
+                </button>
+                <button
+                  onClick={handleRestoreClick}
+                  disabled={importing}
+                  className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/50 border border-green-200 dark:border-green-800 transition-colors duration-150 disabled:opacity-50"
+                  title="Restore data from backup"
+                >
+                  <Upload className={`w-3.5 h-3.5 ${importing ? 'animate-spin' : ''}`} />
+                  <span>{importing ? 'Restoring...' : 'Restore'}</span>
+                </button>
+              </div>
+              
+              {/* Logout */}
               <button
                 onClick={handleLogout}
-                className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 border border-red-200 dark:border-red-800 transition-colors duration-150"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 border border-red-200 dark:border-red-800 transition-colors duration-150"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-3.5 h-3.5" />
                 <span>Logout</span>
               </button>
             </div>

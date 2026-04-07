@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { liabilitiesAPI } from '../api';
 import { usePrivacy } from '../PrivacyContext';
+import AnimatedNumber from '../components/AnimatedNumber';
 import { 
   Plus, 
   Edit2, 
@@ -170,7 +171,13 @@ export default function Liabilities() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-orange-100 font-medium">Total Liabilities</p>
-              <p className="text-3xl font-bold mt-1">{formatCurrency(totalLiabilities)}</p>
+              <p className="text-3xl font-bold mt-1">
+                <AnimatedNumber 
+                  value={totalLiabilities} 
+                  formatter={formatCurrencyRaw}
+                  privacyMask={privacyMode ? '₹ ••••••' : null}
+                />
+              </p>
             </div>
             <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
               <CreditCard className="w-8 h-8" />
@@ -183,7 +190,10 @@ export default function Liabilities() {
             <div>
               <p className="text-gray-500 dark:text-gray-400 font-medium">Avg. Interest Rate</p>
               <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
-                {avgInterestRate ? `${avgInterestRate.toFixed(1)}%` : 'N/A'}
+                <AnimatedNumber 
+                  value={avgInterestRate || 0} 
+                  formatter={(v) => v ? `${v.toFixed(1)}%` : 'N/A'}
+                />
               </p>
             </div>
             <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/50 rounded-2xl flex items-center justify-center">

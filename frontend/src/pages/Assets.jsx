@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { assetsAPI } from '../api';
 import { usePrivacy } from '../PrivacyContext';
+import AnimatedNumber from '../components/AnimatedNumber';
 import { 
   Plus, 
   Edit2, 
@@ -164,7 +165,13 @@ export default function Assets() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-primary-100 font-medium">Total Assets Value</p>
-            <p className="text-3xl font-bold mt-1">{formatCurrency(totalAssets)}</p>
+            <p className="text-3xl font-bold mt-1">
+              <AnimatedNumber 
+                value={totalAssets} 
+                formatter={formatCurrencyRaw}
+                privacyMask={privacyMode ? '₹ ••••••' : null}
+              />
+            </p>
           </div>
           <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
             <Wallet className="w-8 h-8" />

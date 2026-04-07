@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { dashboardAPI, goalAPI } from '../api';
 import { usePrivacy } from '../PrivacyContext';
+import AnimatedNumber from '../components/AnimatedNumber';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -186,7 +187,11 @@ export default function Dashboard() {
             <div>
               <p className="text-sm font-medium text-gray-500">Net Worth</p>
               <p className={`text-2xl font-bold mt-1 ${netWorthPositive ? 'text-green-600' : 'text-red-600'}`}>
-                {formatCurrency(metrics?.net_worth || 0)}
+                <AnimatedNumber 
+                  value={metrics?.net_worth || 0} 
+                  formatter={formatCurrencyRaw}
+                  privacyMask={privacyMode ? '₹ ••••••' : null}
+                />
               </p>
             </div>
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${netWorthPositive ? 'bg-green-100' : 'bg-red-100'}`}>
@@ -205,7 +210,11 @@ export default function Dashboard() {
             <div>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Assets</p>
               <p className="text-2xl font-bold mt-1 text-gray-900 dark:text-white">
-                {formatCurrency(metrics?.total_assets || 0)}
+                <AnimatedNumber 
+                  value={metrics?.total_assets || 0} 
+                  formatter={formatCurrencyRaw}
+                  privacyMask={privacyMode ? '₹ ••••••' : null}
+                />
               </p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{metrics?.asset_count || 0} assets</p>
             </div>
@@ -221,7 +230,11 @@ export default function Dashboard() {
             <div>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Liabilities</p>
               <p className="text-2xl font-bold mt-1 text-gray-900 dark:text-white">
-                {formatCurrency(metrics?.total_liabilities || 0)}
+                <AnimatedNumber 
+                  value={metrics?.total_liabilities || 0} 
+                  formatter={formatCurrencyRaw}
+                  privacyMask={privacyMode ? '₹ ••••••' : null}
+                />
               </p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{metrics?.liability_count || 0} liabilities</p>
             </div>
@@ -237,7 +250,10 @@ export default function Dashboard() {
             <div>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Debt-to-Asset Ratio</p>
               <p className="text-2xl font-bold mt-1 text-gray-900 dark:text-white">
-                {metrics?.debt_to_asset_ratio || 0}%
+                <AnimatedNumber 
+                  value={metrics?.debt_to_asset_ratio || 0} 
+                  formatter={(v) => `${v.toFixed(1)}%`}
+                />
               </p>
               <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                 {(metrics?.debt_to_asset_ratio || 0) < 50 ? 'Healthy' : 'High'}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { insurancesAPI } from '../api';
 import { usePrivacy } from '../PrivacyContext';
+import AnimatedNumber from '../components/AnimatedNumber';
 import { 
   Plus, 
   Edit2, 
@@ -243,7 +244,13 @@ export default function Insurances() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-green-100 font-medium">Total Coverage</p>
-              <p className="text-2xl font-bold mt-1">{formatCurrency(totalCoverage)}</p>
+              <p className="text-2xl font-bold mt-1">
+                <AnimatedNumber 
+                  value={totalCoverage} 
+                  formatter={formatCurrencyRaw}
+                  privacyMask={privacyMode ? '₹ ••••••' : null}
+                />
+              </p>
             </div>
             <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
               <Shield className="w-6 h-6" />
@@ -255,7 +262,13 @@ export default function Insurances() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-blue-100 font-medium">Annual Premium</p>
-              <p className="text-2xl font-bold mt-1">{formatCurrency(totalPremium)}</p>
+              <p className="text-2xl font-bold mt-1">
+                <AnimatedNumber 
+                  value={totalPremium} 
+                  formatter={formatCurrencyRaw}
+                  privacyMask={privacyMode ? '₹ ••••••' : null}
+                />
+              </p>
             </div>
             <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
               <Calendar className="w-6 h-6" />
@@ -267,7 +280,9 @@ export default function Insurances() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-orange-100 font-medium">Expiring Soon</p>
-              <p className="text-2xl font-bold mt-1">{expiringCount}</p>
+              <p className="text-2xl font-bold mt-1">
+                <AnimatedNumber value={expiringCount} formatter={(v) => Math.round(v).toString()} />
+              </p>
               <p className="text-orange-100 text-sm">within 90 days</p>
             </div>
             <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">

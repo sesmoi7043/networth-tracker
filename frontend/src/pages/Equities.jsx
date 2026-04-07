@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { equitiesAPI, exchangeAPI } from '../api';
 import { usePrivacy } from '../PrivacyContext';
+import AnimatedNumber from '../components/AnimatedNumber';
 import { 
   Plus, 
   Edit2, 
@@ -241,7 +242,13 @@ export default function Equities() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-blue-100 font-medium">Invested</p>
-              <p className="text-xl font-bold mt-1">{formatCurrency(totalInvestedINR)}</p>
+              <p className="text-xl font-bold mt-1">
+                <AnimatedNumber 
+                  value={totalInvestedINR} 
+                  formatter={formatCurrencyRaw}
+                  privacyMask={privacyMode ? '₹ ••••••' : null}
+                />
+              </p>
               <p className="text-xs text-blue-200 mt-0.5">All markets in INR</p>
             </div>
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
@@ -254,7 +261,13 @@ export default function Equities() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-green-100 font-medium">Current Value</p>
-              <p className="text-xl font-bold mt-1">{formatCurrency(totalCurrentValueINR)}</p>
+              <p className="text-xl font-bold mt-1">
+                <AnimatedNumber 
+                  value={totalCurrentValueINR} 
+                  formatter={formatCurrencyRaw}
+                  privacyMask={privacyMode ? '₹ ••••••' : null}
+                />
+              </p>
               <p className="text-xs text-green-200 mt-0.5">USD @ ₹{usdToInr.toFixed(2)}</p>
             </div>
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
@@ -269,7 +282,13 @@ export default function Equities() {
               <p className={`${totalGainLossINR >= 0 ? 'text-emerald-100' : 'text-red-100'} font-medium`}>
                 {totalGainLossINR >= 0 ? 'Profit' : 'Loss'}
               </p>
-              <p className="text-xl font-bold mt-1">{formatCurrency(Math.abs(totalGainLossINR))}</p>
+              <p className="text-xl font-bold mt-1">
+                <AnimatedNumber 
+                  value={Math.abs(totalGainLossINR)} 
+                  formatter={formatCurrencyRaw}
+                  privacyMask={privacyMode ? '₹ ••••••' : null}
+                />
+              </p>
             </div>
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
               {totalGainLossINR >= 0 ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
@@ -281,7 +300,12 @@ export default function Equities() {
           <div className="flex items-center justify-between">
             <div>
               <p className={`${overallReturnPercent >= 0 ? 'text-purple-100' : 'text-orange-100'} font-medium`}>Return %</p>
-              <p className="text-xl font-bold mt-1">{formatPercent(overallReturnPercent)}</p>
+              <p className="text-xl font-bold mt-1">
+                <AnimatedNumber 
+                  value={overallReturnPercent} 
+                  formatter={(v) => formatPercent(v)}
+                />
+              </p>
             </div>
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
               <BarChart3 className="w-5 h-5" />

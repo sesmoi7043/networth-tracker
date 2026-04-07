@@ -1,9 +1,10 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
 from datetime import timedelta
 from typing import List
+import json
 
 from config import settings
 from models import (
@@ -203,6 +204,75 @@ async def export_user_data(user_id: str = Depends(get_user_id)):
             "Content-Disposition": f"attachment; filename=networth_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         }
     )
+
+@app.post("/api/import")
+async def import_user_data(file: UploadFile = File(...), user_id: str = Depends(get_user_id)):
+    """Import data from a backup JSON file into the current user's account"""
+    try:
+        content = await file.read()
+        import_data = json.loads(content.decode('utf-8'))
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON file")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to read file: {str(e)}")
+    
+    imported_counts = {
+        "assets": 0,
+        "liabilities": 0,
+        "bank_accounts": 0,
+        "insurances": 0,
+        "mutual_funds": 0,
+        "equities": 0
+    }
+    
+    # Import assets
+    for asset in import_data.get("assets", []):
+        asset_data = {k: v for k, v in asset.items() if k not in ["id", "user_id", "created_at", "updated_at"]}
+        db.create_asset(user_id, asset_data)
+        imported_counts["assets"] += 1
+    
+    # Import liabilities
+    for liability in import_data.get("liabilities", []):
+        liability_data = {k: v for k, v in liability.items() if k not in ["id", "user_id", "created_at", "updated_at"]}
+        db.create_liability(user_id, liability_data)
+        imported_counts["liabilities"] += 1
+    
+    # Import bank accounts
+    for account in import_data.get("bank_accounts", []):
+        account_data = {k: v for k, v in account.items() if k not in ["id", "user_id", "created_at", "updated_at"]}
+        db.create_bank_account(user_id, account_data)
+        imported_counts["bank_accounts"] += 1
+    
+    # Import insurances
+    for insurance in import_data.get("insurances", []):
+        insurance_data = {k: v for k, v in insurance.items() if k not in ["id", "user_id", "created_at", "updated_at"]}
+        db.create_insurance(user_id, insurance_data)
+        imported_counts["insurances"] += 1
+    
+    # Import mutual funds
+    for fund in import_data.get("mutual_funds", []):
+        fund_data = {k: v for k, v in fund.items() if k not in ["id", "user_id", "created_at", "updated_at"]}
+        db.create_mutual_fund(user_id, fund_data)
+        imported_counts["mutual_funds"] += 1
+    
+    # Import equities
+    for equity in import_data.get("equities", []):
+        equity_data = {k: v for k, v in equity.items() if k not in ["id", "user_id", "created_at", "updated_at"]}
+        db.create_equity(user_id, equity_data)
+        imported_counts["equities"] += 1
+    
+    # Import goal if exists
+    goal_data = import_data.get("goal")
+    if goal_data:
+        goal_clean = {k: v for k, v in goal_data.items() if k not in ["id", "user_id", "created_at", "updated_at"]}
+        db.create_or_update_goal(user_id, goal_clean)
+    
+    total_imported = sum(imported_counts.values())
+    return {
+        "status": "success",
+        "message": f"Successfully imported {total_imported} items",
+        "details": imported_counts
+    }
 
 @app.get("/api/dashboard", response_model=DashboardMetrics)
 async def get_dashboard(user_id: str = Depends(get_user_id)):

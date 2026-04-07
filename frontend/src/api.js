@@ -128,6 +128,13 @@ export const goalAPI = {
 // Export API
 export const exportAPI = {
   download: () => api.get('/api/export'),
+  import: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/api/import', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  }
 };
 
 export default api;

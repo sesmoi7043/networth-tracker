@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { bankAccountsAPI } from '../api';
 import { usePrivacy } from '../PrivacyContext';
+import AnimatedNumber from '../components/AnimatedNumber';
 import { 
   Plus, 
   Edit2, 
@@ -172,7 +173,13 @@ export default function BankAccounts() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-blue-100 font-medium">Total Bank Balance</p>
-            <p className="text-3xl font-bold mt-1">{formatCurrency(totalBalance)}</p>
+            <p className="text-3xl font-bold mt-1">
+              <AnimatedNumber 
+                value={totalBalance} 
+                formatter={formatCurrencyRaw}
+                privacyMask={privacyMode ? '₹ ••••••' : null}
+              />
+            </p>
             <p className="text-blue-100 text-sm mt-1">{accounts.length} account{accounts.length !== 1 ? 's' : ''}</p>
           </div>
           <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
