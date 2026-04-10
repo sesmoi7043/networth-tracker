@@ -34,7 +34,7 @@ function fmtNum(value, decimals = 2) {
 
 function fmtCat(str) {
   if (!str) return '—';
-  return str.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  return escapeHtml(str.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()));
 }
 
 function maskAccount(accountNumber) {
@@ -45,6 +45,16 @@ function maskAccount(accountNumber) {
 
 function sumField(arr, key) {
   return arr.reduce((acc, item) => acc + (Number(item[key]) || 0), 0);
+}
+
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 // ─── CSS ─────────────────────────────────────────────────────────────────────
@@ -152,7 +162,7 @@ function buildGoalCard(goal, netWorth, isPrivate) {
   return `
     <div class="goal-card">
       <div class="section-label">Net Worth Goal</div>
-      <div class="goal-name">${goal.name || 'Net Worth Goal'}</div>
+      <div class="goal-name">${escapeHtml(goal.name) || 'Net Worth Goal'}</div>
       <div class="goal-meta">Target: ${fmt(target, isPrivate)} &nbsp;·&nbsp; Current: ${fmt(netWorth, isPrivate)}</div>
       <div class="progress-bg"><div class="progress-fill" style="width:${barWidth}%"></div></div>
       <div class="progress-pct">${pctLabel} complete</div>
@@ -164,7 +174,7 @@ function buildAssetsSection(assets, isPrivate) {
     ? `<tr class="no-data"><td colspan="3">No entries</td></tr>`
     : assets.map((a) => `
         <tr>
-          <td>${a.name}</td>
+          <td>${escapeHtml(a.name)}</td>
           <td>${fmtCat(a.category)}</td>
           <td class="num">${fmt(a.value, isPrivate)}</td>
         </tr>`).join('') + `
@@ -187,7 +197,7 @@ function buildLiabilitiesSection(liabilities, isPrivate) {
     ? `<tr class="no-data"><td colspan="4">No entries</td></tr>`
     : liabilities.map((l) => `
         <tr>
-          <td>${l.name}</td>
+          <td>${escapeHtml(l.name)}</td>
           <td>${fmtCat(l.category)}</td>
           <td class="num">${fmt(l.amount, isPrivate)}</td>
           <td class="num">${l.interest_rate != null ? l.interest_rate + '%' : '—'}</td>
@@ -212,7 +222,7 @@ function buildBankAccountsSection(accounts, isPrivate) {
     ? `<tr class="no-data"><td colspan="4">No entries</td></tr>`
     : accounts.map((a) => `
         <tr>
-          <td>${a.bank_name}</td>
+          <td>${escapeHtml(a.bank_name)}</td>
           <td>${fmtCat(a.account_type)}</td>
           <td>${maskAccount(a.account_number)}</td>
           <td class="num">${fmt(a.balance, isPrivate)}</td>
@@ -240,7 +250,7 @@ function buildMutualFundsSection(funds, isPrivate) {
     ? `<tr class="no-data"><td colspan="5">No entries</td></tr>`
     : funds.map((f) => `
         <tr>
-          <td>${f.fund_name}</td>
+          <td>${escapeHtml(f.fund_name)}</td>
           <td class="num">${fmtNum(f.units, 3)}</td>
           <td class="num">${fmtNum(f.avg_nav)}</td>
           <td class="num">${f.current_nav != null ? fmtNum(f.current_nav) : '—'}</td>
@@ -266,10 +276,10 @@ function buildEquitiesSection(equities, isPrivate) {
     : equities.map((e) => `
         <tr>
           <td>
-            <strong>${e.symbol}</strong>
-            ${e.company_name ? `<br><small style="color:#64748b;font-size:11px">${e.company_name}</small>` : ''}
+            <strong>${escapeHtml(e.symbol)}</strong>
+            ${e.company_name ? `<br><small style="color:#64748b;font-size:11px">${escapeHtml(e.company_name)}</small>` : ''}
           </td>
-          <td>${e.market}</td>
+          <td>${escapeHtml(e.market)}</td>
           <td class="num">${e.quantity}</td>
           <td class="num">${fmtNum(e.avg_buy_price)}</td>
           <td class="num">${e.current_price != null ? fmtNum(e.current_price) : '—'}</td>
@@ -294,9 +304,9 @@ function buildInsurancesSection(insurances, isPrivate) {
     ? `<tr class="no-data"><td colspan="5">No entries</td></tr>`
     : insurances.map((ins) => `
         <tr>
-          <td>${ins.policy_name}</td>
+          <td>${escapeHtml(ins.policy_name)}</td>
           <td>${fmtCat(ins.insurance_type)}</td>
-          <td>${ins.provider}</td>
+          <td>${escapeHtml(ins.provider)}</td>
           <td class="num">${fmt(ins.premium, isPrivate)}</td>
           <td>${fmtCat(ins.premium_frequency)}</td>
         </tr>`).join('');
