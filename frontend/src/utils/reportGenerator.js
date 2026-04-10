@@ -301,12 +301,13 @@ function buildEquitiesSection(equities, isPrivate) {
 
 function buildInsurancesSection(insurances, isPrivate) {
   const rows = insurances.length === 0
-    ? `<tr class="no-data"><td colspan="5">No entries</td></tr>`
+    ? `<tr class="no-data"><td colspan="6">No entries</td></tr>`
     : insurances.map((ins) => `
         <tr>
           <td>${escapeHtml(ins.policy_name)}</td>
           <td>${fmtCat(ins.insurance_type)}</td>
           <td>${escapeHtml(ins.provider)}</td>
+          <td class="num">${fmt(ins.sum_assured, isPrivate)}</td>
           <td class="num">${fmt(ins.premium, isPrivate)}</td>
           <td>${fmtCat(ins.premium_frequency)}</td>
         </tr>`).join('');
@@ -314,7 +315,7 @@ function buildInsurancesSection(insurances, isPrivate) {
     <div class="section">
       <div class="section-header">Insurances</div>
       <table>
-        <thead><tr><th>Policy Name</th><th>Type</th><th>Insurer</th><th class="num">Premium</th><th>Frequency</th></tr></thead>
+        <thead><tr><th>Policy Name</th><th>Type</th><th>Insurer</th><th class="num">Coverage</th><th class="num">Premium</th><th>Frequency</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>`;
